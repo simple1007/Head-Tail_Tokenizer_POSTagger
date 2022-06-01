@@ -15,7 +15,6 @@ mode file!!"filename",or text!!"text" or exit:text!!나는 밥을 먹고 학교�
 mode file!!"filename",or text!!"text" or exit:file!!test.txt
 output file name:result.txt(분석결과 저장할 파일명 입력)
 
-
 # 종료
 mode file!!"filename",or text!!"text" or exit:exit
 ```
