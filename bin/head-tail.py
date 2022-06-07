@@ -117,6 +117,7 @@ while True:
 
             l = preprocess(l)
             X.append(l.replace(' ','▁'))
+            # X.append(l)
             if len(X) == 200:
                 tok = get_tok(X)
                 tok_ = []
@@ -125,13 +126,16 @@ while True:
                 pos = get_pos(tok_,tok)
                 X = []
                 output.write('\n'.join(pos)+'\n')
-        tok = get_tok(X)
-        tok_ = []
-        for tk in tok:
-            tok_.append(tk.replace('+',' '))
-        pos = get_pos(tok_,tok)
+        if len(X) > 0:
+            # print('T',X)
+            tok = get_tok(X)
+            tok_ = []
+            for tk in tok:
+                # print(tk)
+                tok_.append(tk.replace('+',' '))
+            pos = get_pos(tok_,tok)
             # print(pos)
-        output.write('\n'.join(pos)+'\n')
+            output.write('\n'.join(pos)+'\n')
         output.close()
     elif mode == 'text':
         # line = input('text:')
@@ -139,8 +143,9 @@ while True:
         line = line.strip()
         line = line[:300]
         line = preprocess(line)
-        line = [line]
+        line = [line.replace(' ','▁')]
         tok = get_tok(line)
+        tok[0] = tok[0].replace('▁',' ')
         tok_ = []
         for tk in tok:
             tok_.append(tk.replace('+',' '))
