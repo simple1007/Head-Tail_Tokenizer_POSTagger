@@ -35,6 +35,7 @@ optional arguments:
   * --inputY kcc150_autospace.txt
   * --BATCH 50
   *--MAX_LEN 300
+  
 * 학습에 사용된 Numpy Dataset [다운로드](https://drive.google.com/file/d/1fqdUo11f5k3qPkWx1XI4C6pikIsai9cY/view?usp=sharing)]
 
 ## Tokenizer 학습
