@@ -2,7 +2,7 @@ from transformers import TFBertForTokenClassification
 from tensorflow.keras.layers import LSTM,Input,Dropout, Bidirectional,Embedding,TimeDistributed,Dense
 from tensorflow.keras.models import Model
 from transformers import create_optimizer
-from transformers import TFDistilBertModel as TFBertModel
+from transformers import TFDistilBertModel, TFBertModel
 
 import pickle
 import tensorflow_addons as tfa
@@ -24,7 +24,7 @@ parser.add_argument("--BATCH",type=int,help="BATCH Size",default=50)
 parser.add_argument("--EPOCH",type=int,help="EPOCH Size",default=5)
 parser.add_argument("--epoch_step",type=int,help="Train Data Epoch Step",default=4000)
 parser.add_argument("--validation_step",type=int,help="Validation Data Epoch Step",default=240)
-parser.add_argument("--hidden_state",type=int,help="BiLstm Hidden State",default=tag_len*2)
+parser.add_argument("--hidden_state",type=int,help="BiLstm Hidden State",default=600)#tag_len*2)
 parser.add_argument("--GPU_NUM",type=str,help="Train GPU NUM",default="0")
 parser.add_argument("--model_name",type=str,help="Tokenizer Model Name",default="tkbigram_one_first_alltag_bert_tagger_distil.model")
 
@@ -56,11 +56,11 @@ def dataset():
                 segments.append(segment)
             masks = np.array(masks)
             segments = np.array(segments)
-            yield [bi,data,masks,segments],y
+            yield [bi,data,masks],y
 
 def validation():
     for _ in range(EPOCH):
-        for i in range(count_data,count_data+240):
+        for i in range(count_data,count_data+1200):
             masks = []
             segments = []
             data = np.load('kcc150_data/%05d_x.npy' % i)
@@ -74,7 +74,7 @@ def validation():
                 segments.append(segment)
             masks = np.array(masks)
             segments = np.array(segments)
-            yield [bi,data,masks,segments],y
+            yield [bi,data,masks],y
 
 
 with open('kcc150_all_tokenbi.pkl','rb') as f:
@@ -87,8 +87,8 @@ class PosTaggerModel:
         self.tag_len = tag_len
 
     def build(self):
-        bmodel = TFBertModel.from_pretrained('monologg/distilkobert', from_pt=True)#TFBertForTokenClassification.from_pretrained("monologg/kobert", num_labels=32, from_pt=True)
-
+        bmodel = TFDistilBertModel.from_pretrained('monologg/distilkobert', from_pt=True)#TFBertForTokenClassification.from_pretrained("monologg/kobert", num_labels=32, from_pt=True)
+        # bmodel = TFBertModel.from_pretrained('monologg/kobert', from_pt=True)
         input_bigram = tf.keras.layers.Input((self.max_len,), dtype=tf.int32, name='input_bigram_ids')
         emb = Embedding(len(bigram.keys()),80,input_length=self.max_len)(input_bigram)
         emb_lstm = LSTM(768)(emb)
@@ -97,8 +97,13 @@ class PosTaggerModel:
         token_inputs = tf.keras.layers.Input((self.max_len,), dtype=tf.int32, name='input_word_ids')
         mask_inputs = tf.keras.layers.Input((self.max_len,), dtype=tf.int32, name='input_masks')
         # segment_inputs = tf.keras.layers.Input((self.max_len,), dtype=tf.int32, name='input_segment')
-        outputs = bmodel.bert(input_ids=token_inputs,attention_mask = mask_inputs)[0]
-
+        # outputs = bmodel(input_ids=token_inputs,attention_mask = mask_inputs)[0]
+        outputs = bmodel.distilbert(input_ids=token_inputs,attention_mask = mask_inputs)[0]#.last_hidden_state #.bert(input_ids=token_inputs,attention_mask = mask_inputs)[0]
+        # print(outputs,outputs[0].shape)
+        # doc_encodings = tf.squeeze(outputs[:, 0:1, :], axis=1)
+        # print(type(outputs),outputs.shape)
+        # print(doc_encodings.shape)
+        # exit()
         outputs = tf.keras.layers.Concatenate(axis=-2)([emb_lstm, outputs[:,1:,:]])
 
         lstm = Bidirectional(LSTM(self.hidden_state,return_sequences=True,dropout=0.1))(outputs)
@@ -130,7 +135,12 @@ n_data = dataset()
 n_validation = validation()
 
 log_dir = "logs/" + datetime.datetime.now().strftime("pretag_%Y%m%d-%H%M%S")
+
+from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
+
+callbacks = [EarlyStopping(monitor='val_loss',patience=1), ModelCheckpoint("hatespeech_sentence_embedding.model",monitor="val_loss",save_best_only=True),tf.keras.callbacks.TensorBoard(log_dir=log_dir, histogram_freq=1)]
+
 model = PosTaggerModel(max_len,args.hidden_state,tag_len).build()
-model.fit(n_data,epochs=EPOCH,batch_size=args.BATCH,steps_per_epoch=count_data,validation_data=n_validation,validation_steps=validation_step,callbacks=[tf.keras.callbacks.TensorBoard(log_dir=log_dir, histogram_freq=1)])
+model.fit(n_data,epochs=EPOCH,batch_size=args.BATCH,steps_per_epoch=count_data,validation_data=n_validation,validation_steps=validation_step,callbacks=[callbacks])
 
 model.save(args.model_name)
