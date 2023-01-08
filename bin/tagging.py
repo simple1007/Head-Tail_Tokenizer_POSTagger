@@ -106,7 +106,7 @@ def start(x1,x2,tkline1,tkline2):
             break
     return tag_re[0] + tag_re[1]  
 
-def predict_th(pos_model,x,tk_line,i):
+def predict_th(pos_model,x,tk_line,i,lite=False):
         # sess = tf.get_default_session()
     BI = []
     for xx in x:
@@ -144,8 +144,10 @@ def predict_th(pos_model,x,tk_line,i):
     # with graph.as_default():
     #     with sess.as_default():
     # result = model.predict([bi_temp,x,masks,segments])
-
-    result = pos_model.predict([bi_temp,x,masks,segments])
+    if lite:
+        result = pos_model.predict([bi_temp,x,masks])
+    else:
+        result = pos_model.predict([bi_temp,x,masks,segments])
     result_ = tf.argmax(result,axis=2).numpy()
 
     result_ = result_[:,1:]
@@ -198,7 +200,7 @@ def argmax(x,tkline,index):
 #     r=p.map(argmax, data)
 #     return r
 
-def predictbi(model,x,tk_line):
+def predictbi(model,x,tk_line,lite=False):
     	# x = x.replace('  ',' ').replace(' ','▁')
 	# x = list(x)
     BI = []
@@ -236,7 +238,10 @@ def predictbi(model,x,tk_line):
 	# return x,x_temp,x_len
     # with graph.as_default():
     #     with sess.as_default():
-    result = model.predict([bi_temp,x,masks,segments])
+    if lite:
+        result = model.predict([bi_temp,x,masks])
+    else:
+        result = model.predict([bi_temp,x,masks,segments])
 
     data = [[],[],[],[]]#range(0,result.shape[0])
     line_data = [[],[],[],[]]
