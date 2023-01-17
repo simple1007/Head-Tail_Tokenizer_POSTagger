@@ -1,5 +1,6 @@
 from tensorflow.keras.layers import LSTM, Input, Bidirectional, Embedding,TimeDistributed,Dense,Concatenate
 from tensorflow.keras import Model
+from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
 
 import pickle
 import numpy as np
@@ -37,7 +38,7 @@ def dataset():
             yield [data,data_bigram],y
 
 def validation():
-    for _ in range(EPOCH):
+    for _ in range(EPOCH*2):
         for i in range(count_data,count_data+validation_data):
             data = np.load('token_data/%05d_lstm_x.npy' % i)
             data_bigram = np.load('token_data/%05d_bigram.npy' % i)
@@ -74,7 +75,9 @@ class TK_Model:
 train_data = dataset()
 val_data = validation()
 
-model = TK_Model(max_len).build()
-model.fit(train_data,epochs=EPOCH,batch_size=BATCH_SIZE,validation_data=val_data,steps_per_epoch=count_data,validation_steps=validation_data)#,callbacks=[callback])
+callbacks = [EarlyStopping(monitor='val_loss',patience=2), ModelCheckpoint(args.model_name,monitor='val_loss',save_best_only=True)]
 
-model.save(args.model_name)
+model = TK_Model(max_len).build()
+model.fit(train_data,epochs=EPOCH,batch_size=BATCH_SIZE,validation_data=val_data,steps_per_epoch=count_data,validation_steps=validation_data,callbacks=callbacks)#,callbacks=[callback])
+
+# model.save(args.model_name)

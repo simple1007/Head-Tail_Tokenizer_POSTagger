@@ -69,6 +69,22 @@ for l in morph_f:
     count_length += 1
 morph_f.seek(0)
 
+def tagged_reduce(tag):
+    tag = tag__.pop(0)
+    tag = tag.split('_')
+    tag = [t if t == 'VV' or t == 'VA' else t[0] for t in tag]
+    tag = '_'.join(tag)
+    if 't_' in tag:
+        tag_spl = tag.split('_')
+        if len(tag_spl) <= 2:
+            tag = tag.replace('t_','')
+        elif tag_spl[1] == 'SN':
+            tag = tag_spl[-3]+'_'+tag_spl[-2]
+        else:
+            tag = tag_spl[1]+'_'+tag_spl[2]
+    
+    return tag#,tag_spl
+
 for line in tqdm(range(count_length)):
 # for line,(morph_,tag_) in enumerate(zip(morph_f,tag_f)):
     morph_ = morph_f.readline()
@@ -99,18 +115,19 @@ for line in tqdm(range(count_length)):
         try:
             for i in mm:
                 if '▁' in i and i !='▁':
-                    tag = tag__.pop(0)
-                    tag = tag.split('_')
-                    tag = [t[0] for t in tag]
-                    tag = '_'.join(tag)
-                    if 't_' in tag:
-                        tag_spl = tag.split('_')
-                        if len(tag_spl) <= 2:
-                            tag = tag.replace('t_','')
-                        elif tag_spl[1] == 'SN':
-                            tag = tag_spl[-3]+'_'+tag_spl[-2]
-                        else:
-                            tag = tag_spl[1]+'_'+tag_spl[2]
+                    tag = tagged_reduce(tag)
+                    # tag = tag__.pop(0)
+                    # tag = tag.split('_')
+                    # tag = [t[0] for t in tag]
+                    # tag = '_'.join(tag)
+                    # if 't_' in tag:
+                    #     tag_spl = tag.split('_')
+                    #     if len(tag_spl) <= 2:
+                    #         tag = tag.replace('t_','')
+                    #     elif tag_spl[1] == 'SN':
+                    #         tag = tag_spl[-3]+'_'+tag_spl[-2]
+                    #     else:
+                    #         tag = tag_spl[1]+'_'+tag_spl[2]
 
                     count = 0
                     temp = '*'
@@ -118,18 +135,19 @@ for line in tqdm(range(count_length)):
                 elif temp!='▁' and '▁' not in i:
                     tag_re.append('I_'+tag)
                 if i == '▁':
-                    tag = tag__.pop(0)
-                    tag = tag.split('_')
-                    tag = [t[0] for t in tag]
-                    tag = '_'.join(tag)
-                    if 't_' in tag:
-                        tag_spl = tag.split('_')
-                        if len(tag_spl) <= 2:
-                            tag = tag.replace('t_','')
-                        elif tag_spl[1] == 'SN':
-                            tag = tag_spl[-3]+'_'+tag_spl[-2]
-                        else:
-                            tag = tag_spl[1]+'_'+tag_spl[2]
+                    tag = tagged_reduce(tag)
+                    # tag = tag__.pop(0)
+                    # tag = tag.split('_')
+                    # tag = [t[0] for t in tag]
+                    # tag = '_'.join(tag)
+                    # if 't_' in tag:
+                    #     tag_spl = tag.split('_')
+                    #     if len(tag_spl) <= 2:
+                    #         tag = tag.replace('t_','')
+                    #     elif tag_spl[1] == 'SN':
+                    #         tag = tag_spl[-3]+'_'+tag_spl[-2]
+                    #     else:
+                    #         tag = tag_spl[1]+'_'+tag_spl[2]
 
                     temp = i
                     count = 0

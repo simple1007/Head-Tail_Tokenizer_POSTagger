@@ -138,9 +138,9 @@ log_dir = "logs/" + datetime.datetime.now().strftime("pretag_%Y%m%d-%H%M%S")
 
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
 
-callbacks = [EarlyStopping(monitor='val_loss',patience=1), ModelCheckpoint("hatespeech_sentence_embedding.model",monitor="val_loss",save_best_only=True),tf.keras.callbacks.TensorBoard(log_dir=log_dir, histogram_freq=1)]
+callbacks = [EarlyStopping(monitor='val_loss',patience=1), ModelCheckpoint(args.model_name,monitor="val_loss",save_best_only=True),tf.keras.callbacks.TensorBoard(log_dir=log_dir, histogram_freq=1)]
 
 model = PosTaggerModel(max_len,args.hidden_state,tag_len).build()
 model.fit(n_data,epochs=EPOCH,batch_size=args.BATCH,steps_per_epoch=count_data,validation_data=n_validation,validation_steps=validation_step,callbacks=[callbacks])
 
-model.save(args.model_name)
+# model.save(args.model_name)

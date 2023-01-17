@@ -26,7 +26,8 @@ with open(input_name,'r',encoding='utf-8') as in_f:
     in_f.seek(0)
     print(count)
     for _ in tqdm(range(count)):
-        l = in_f.readline()
+        l = in_f.readline()+' '
+        #l = l.strip()
         l = l.replace('\n','')
         l = l.split(' ')
         
