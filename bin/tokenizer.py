@@ -3,8 +3,9 @@ import tensorflow as tf
 import pickle
 import re
 import os
-# root = os.environ['ROOT']
-root = '.'
+import math
+root = os.environ['HT']
+# root = '.'
 max_len = 300
 with open(root+'/lstm_vocab.pkl','rb') as f:
     vocab = pickle.load(f)
@@ -28,7 +29,7 @@ def w2i(x_t):
 
     return x
 
-def predict(model,x):
+def predict(model,x,verbose=0):
     BI = []
     x_temp = x
     x_len = len(x)
@@ -52,7 +53,7 @@ def predict(model,x):
     # print(type(BI),BI.shape)
     result = None
     # try:
-    result = model.predict([x,BI])
+    result = model.predict([x,BI],verbose=verbose)
     # except Exception as ex:
     #     print(ex)
     #     # print(x_temp)
@@ -75,6 +76,7 @@ def predict(model,x):
     #     print(i)
     for index,tag_ in enumerate(result_):
         x_te = list(x_temp[index])
+        # print(tag_)
         # print(x_te)
         tag_prob = []
         for index_temp,te in enumerate(tag_):
@@ -91,6 +93,7 @@ def predict(model,x):
             elif te == 3 and index_temp < len(tag_)-1 and tag_[index_temp+1] == 3:
                 break
         x_te = ''.join(x_te).replace('▁',' ')
+        # print(x_te)
         x_te = x_te.split(' ')
         temp_tok = []
         for ti,xttt in enumerate(x_te):
@@ -102,28 +105,40 @@ def predict(model,x):
                 mem_prob = []
                 max = 0
                 maxi = -1
+                # print(xttt)
                 for memi, xttt_ in enumerate(xttt):
                     if memi % 2 == 0:
                         mem.append(xttt_.strip('+'))
                         continue
-                    # else:
-                    #     mem.append(xttt_)
-                    # xttt_ = xttt_.split('&&')
+                    else:
+                        # print('fff',xttt_)
+                        # continue
+                        1 == 1
+                        # mem.append(xttt_.split('&&')[0])
+                    
+                    xttt_ = xttt_.split('&&')
                     # print(xttt_)
-                    if max < float(xttt_):
-                        max = float(xttt_)
-                        maxi = memi - 1
+                    # maxi = memi
+                    
+                    if max < float(xttt_[0]):
+                        max = float(xttt_[0])
+                        maxi = memi - len(mem) + 1
+                        # print(max,maxi)
                         
                     # mem_prob(float(xttt_[1]))
-                
+                # print(mem,maxi)
                 h = ''.join(mem[:maxi])#[0]
                 # t = ''.join(xttt[1:])
                 t = ''.join(mem[maxi:])
                 xttt = h+'+'+t
             temp_tok.append(xttt)
+            # else:
+            #     temp_tok.append(xttt)
         x_te = ' '.join(temp_tok)
         x_te = re.sub(' +',' ',x_te)
+        # print(x_te)
         x_te = re.sub('&&[0-9].[0-9]+&&','',x_te)
+        # print(x_te)
         x_te = x_te.strip()
         tagging.append(x_te)
     # print(tagging)
