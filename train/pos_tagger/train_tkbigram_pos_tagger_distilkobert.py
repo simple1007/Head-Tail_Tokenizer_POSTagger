@@ -3,6 +3,7 @@ from tensorflow.keras.layers import LSTM,Input,Dropout, Bidirectional,Embedding,
 from tensorflow.keras.models import Model
 from transformers import create_optimizer
 from transformers import TFDistilBertModel, TFBertModel
+from tokenization_kobert import KoBertTokenizer
 
 import pickle
 import tensorflow_addons as tfa
@@ -16,7 +17,7 @@ import argparse
 with open('kcc150_all_tag_dict.pkl','rb') as f:
     tag_dict = pickle.load(f)
 tag_len = len(tag_dict.keys())
-
+tokenizer = KoBertTokenizer.from_pretrained('monologg/kobert')
 parser = argparse.ArgumentParser(description="Postagger")
 
 parser.add_argument("--MAX_LEN",type=int,help="MAX Sequnce Length",default=200)
@@ -47,7 +48,7 @@ def dataset():
             data = np.load('kcc150_data/%05d_x.npy' % i)
             y = np.load('kcc150_data/%05d_y.npy' % i)
             bi = np.load('kcc150_data/%05d_tk_bigram.npy' % i)
-            
+            # tokenizer()
             for d in data:
                 d_ = [t for t in d if t != 1]
                 mask = [1]*len(d_) + [0] * (max_len-len(d_))
@@ -90,8 +91,15 @@ class PosTaggerModel:
         bmodel = TFDistilBertModel.from_pretrained('monologg/distilkobert', from_pt=True)#TFBertForTokenClassification.from_pretrained("monologg/kobert", num_labels=32, from_pt=True)
         # bmodel = TFBertModel.from_pretrained('monologg/kobert', from_pt=True)
         input_bigram = tf.keras.layers.Input((self.max_len,), dtype=tf.int32, name='input_bigram_ids')
-        emb = Embedding(len(bigram.keys()),80,input_length=self.max_len)(input_bigram)
+        emb = Embedding(len(bigram.keys()),16,input_length=self.max_len)(input_bigram)
         emb_lstm = LSTM(768)(emb)
+        # # emb_lstm = tf.keras.layers.Flatten()(emb_lstm)
+        # # emb_lstm_ = emb_lstm
+        # # for i in range(24-1):
+        # #     emb_lstm_ = tf.concat([emb_lstm_, emb_lstm],-1)
+        # # # print(emb_lstm_.shape)
+        # # # exit()
+        # # emb_lstm = emb_lstm_
         emb_lstm = tf.expand_dims(emb_lstm,1)
 
         token_inputs = tf.keras.layers.Input((self.max_len,), dtype=tf.int32, name='input_word_ids')
@@ -106,8 +114,8 @@ class PosTaggerModel:
         # exit()
         outputs = tf.keras.layers.Concatenate(axis=-2)([emb_lstm, outputs[:,1:,:]])
 
-        lstm = Bidirectional(LSTM(self.hidden_state,return_sequences=True,dropout=0.1))(outputs)
-        lstm = TimeDistributed(Dense(self.tag_len, activation='softmax'))(lstm)
+        lstm = Bidirectional(LSTM(self.tag_len,return_sequences=True,dropout=0.1),merge_mode='sum')(outputs)
+        # lstm = TimeDistributed(Dense(self.tag_len, activation='softmax'))(lstm)
 
 
         model = Model(inputs=[input_bigram,token_inputs,mask_inputs],outputs=lstm)
@@ -115,7 +123,7 @@ class PosTaggerModel:
         # Rectified Adam 옵티마이저 사용
 
         # 총 batch size * 4 epoch = 2344 * 4
-        opt = tfa.optimizers.RectifiedAdam(lr=2.0e-5, total_steps = 2344*4
+        opt = tfa.optimizers.RectifiedAdam(learning_rate=2.0e-5, total_steps = 2344*4
                 , warmup_proportion=0.1, min_lr=1e-7, epsilon=1e-08, clipnorm=1.0)
         opt = tf.keras.optimizers.Adam(learning_rate=1e-7)
         opt, schedule = create_optimizer(
