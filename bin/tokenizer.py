@@ -53,7 +53,7 @@ def predict(model,x,verbose=0):
     # print(type(BI),BI.shape)
     result = None
     # try:
-    result = model.predict([x,BI],verbose=verbose)
+    result = model.predict([x,BI],verbose=verbose,workers=5,use_multiprocessing=True)
     # except Exception as ex:
     #     print(ex)
     #     # print(x_temp)
