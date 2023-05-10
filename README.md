@@ -22,11 +22,11 @@
 | hannanum | 82.91 | 87.03 |
 | komoran | 88.91 | 91.64 |
 | mecab | 88.26 | 91.09 |
-| Head-Tail | 86.13 | 89.59 |
+| **Head-Tail** | 86.13 | 89.59 |
 
 * Distil KoBERT MRC(w/o Head-Tail, Head-Tail)
 
 | Tokenizer | Rouge1-Score |
 | :---:   | :---: |
 | w/o Head-Tail | 70.38 |
-| Head-Tail after Subword Tokenization | 79.70 |
+| **Head-Tail after Subword Tokenization** | 79.70 |
