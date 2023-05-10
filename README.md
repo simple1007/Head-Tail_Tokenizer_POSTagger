@@ -27,6 +27,7 @@
 * Distil KoBERT MRC(w/o Head-Tail, Head-Tail)
 * 어휘형태소와 문법형태소가 분리되어 있어 문법형태소가 포함되지 않을 확률이 커진것으로 보임
 * 모델 자체의 성능 보다는 정답 라벨의 범위를 깔끔하게 찾아내는것이 핵심
+
 | Tokenizer | Rouge1-Score |
 | :---:   | :---: |
 | w/o Head-Tail | 70.38 |
