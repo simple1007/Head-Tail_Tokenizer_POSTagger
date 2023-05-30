@@ -17,7 +17,7 @@
 ## Classification
 * 명사 추출후 Hate Speech Class 분류
 
-| Tokenizer | Accuracy | F1-Score |
+| Tokenizer / Score Matrix | Accuracy | F1-Score |
 | :---:   | :---: | :---: |
 | okt | 83.67 | 87.59 |
 | hannanum | 82.91 | 87.03 |
