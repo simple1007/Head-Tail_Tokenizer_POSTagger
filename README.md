@@ -14,6 +14,7 @@
 
 실험
 # Head-Tail 토큰화 실험
+## Classification
 * 명사 추출후 Hate Speech Class 분류
 
 | Tokenizer | Accuracy | F1-Score |
@@ -24,6 +25,7 @@
 | mecab | 88.26 | 91.09 |
 | **Head-Tail** | 86.13 | 89.59 |
 
+## MRC
 * Distil KoBERT MRC(w/o Head-Tail, Head-Tail)
 * 어휘형태소와 문법형태소가 분리되어 있어 문법형태소가 포함되지 않을 확률이 커진것으로 보임
 * 모델 자체의 성능 보다는 정답 라벨의 범위를 깔끔하게 찾아내는것이 핵심
