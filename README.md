@@ -31,7 +31,7 @@
 * 모델 자체의 성능 보다는 정답 라벨의 범위를 깔끔하게 찾아내는것이 핵심
 * Test Dataset 100,000 lines
 
-| Tokenizer / Score Matrix | Rouge1-Score | Accuracy | F1-Score |
+| Tokenizer / Score Matrix | Rouge1-Score(recall/precision) | Accuracy | F1-Score |
 | :---:   | :---: | :---: | :---: |
-| w/o Head-Tail | 71.42 | 60.92 | 72.62 |
-| **Head-Tail after Subword Tokenization** | 78.50 | 67.96 | 80.39 |
+| w/o Head-Tail | 73.80/73.80 | 61.50 | 72.89 |
+| **Head-Tail after Subword Tokenization** | 81.80/78.23 | 67.68 | 79.97 |
