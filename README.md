@@ -16,6 +16,7 @@
 # Head-Tail 토큰화 실험
 ## Classification
 * 명사 추출후 Hate Speech Class 분류
+* 복합 명사 미분해로 인한 성능저하 있음 추후 적용하여 실험 예정
 
 | Tokenizer / Score Matrix | Accuracy | F1-Score |
 | :---:   | :---: | :---: |
