@@ -33,5 +33,5 @@
 
 | Tokenizer / Score Matrix | Rouge1-Score(recall/precision) | Accuracy | F1-Score |
 | :---:   | :---: | :---: | :---: |
-| w/o Head-Tail | 73.80/73.80 | 61.50 | 72.89 |
+| w/o Head-Tail | 73.80/72.00 | 61.50 | 72.89 |
 | **Head-Tail after Subword Tokenization** | 81.80/78.23 | 67.68 | 79.97 |
