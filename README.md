@@ -26,7 +26,7 @@
 | **Head-Tail** | 86.13 | 89.59 |
 
 ## MRC
-* Distil KoBERT MRC(w/o Head-Tail, Head-Tail)
+* Distil KoBERT MRC(w/o Head-Tail, Head-Tail) [품사태그는 사용안함]
 * 어휘형태소와 문법형태소가 분리되어 있어 문법형태소가 포함되지 않을 확률이 커진것으로 보임
 * 모델 자체의 성능 보다는 정답 라벨의 범위를 깔끔하게 찾아내는것이 핵심
 * Test Dataset 100,000 lines
