@@ -37,7 +37,8 @@
 | komoran | 82.15 | 81.76 |
 | mecab |  |  |
 | kkma | 81.76 | 80.85 |
-| **Head-Tail** | 82.51 | 82.69 |
+| **Head-Tail**(Komoran 복합명사 분해: 분석결과에 명사가 아닌것이 있음 분해안함) | 82.51 | 82.69 |
+| **Head-Tail**(복합명사 분해안함) | 81.59 | 81.01 |
 
 ## MRC
 * Distil KoBERT MRC(w/o Head-Tail, Head-Tail) [품사태그는 사용안함]
