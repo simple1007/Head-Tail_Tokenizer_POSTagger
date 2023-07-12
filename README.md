@@ -26,6 +26,19 @@
 | mecab | 88.26 | 91.09 |
 | **Head-Tail** | 86.13 | 89.59 |
 
+* Ngram 언어모델을 이용한 자동띄어쓰기로 띄어쓰기 오류 수정
+* 어미, 조사, 부호 토큰을 제외한 모든 토큰 사용
+* NSMC 네이버 영화 리뷰 분류
+  
+| Tokenizer / Score Matrix | Accuracy | F1-Score |
+| :---:   | :---: | :---: |
+| okt | 82.88 | 82.75 |
+| hannanum |  |  |
+| komoran | 82.15 | 81.76 |
+| mecab |  |  |
+| kkma | 81.76 | 80.85 |
+| **Head-Tail** | 82.51 | 82.69 |
+
 ## MRC
 * Distil KoBERT MRC(w/o Head-Tail, Head-Tail) [품사태그는 사용안함]
 * 어휘형태소와 문법형태소가 분리되어 있어 문법형태소가 포함되지 않을 확률이 커진것으로 보임
